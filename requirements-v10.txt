@@ -1,3 +1,6 @@
+# pip install opencv-python numpy
+# pip install torch torchvision
+# pip install transformers accelerate pillow
 # pip install torch torchvision transformers accelerate 
 
 # =============================================================================
