@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Отчёт $script_version — сравнение товарных знаков</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         margin: 24px; background: #f5f5f5; color: #222; }
+  h1 { margin-bottom: 4px; }
+  h2 { margin-top: 28px; }
+  .meta { color: #666; margin-bottom: 20px; line-height: 1.6; }
+  .card { background: #fff; border-radius: 10px; padding: 16px 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,.12); margin-bottom: 20px; }
+  table { border-collapse: collapse; width: 100%; background: #fff;
+          box-shadow: 0 1px 3px rgba(0,0,0,.12); border-radius: 8px; overflow: hidden; }
+  th { background: #1565c0; color: #fff; padding: 9px 6px; text-align: left;
+       font-weight: 600; font-size: 12px; cursor: pointer; user-select: none; }
+  th:hover { background: #0d47a1; }
+  td { font-size: 12px; }
+  tr:hover td { background: #e3f2fd !important; }
+  .sem-col { display: $sem_visible_default; }
+  .thumb { border: 1px solid #ddd; border-radius: 6px; max-width: 100%; }
+  .kpi { display: flex; gap: 12px; flex-wrap: wrap; }
+  .kpi div { background: #fff; padding: 12px 16px; border-radius: 8px;
+             box-shadow: 0 1px 2px rgba(0,0,0,.1); min-width: 130px; }
+  .kpi b { font-size: 20px; display: block; }
+</style>
+</head>
+<body>
+  <h1>Сравнение товарных знаков
+    <span style="font-weight:400;color:#666;">$script_version</span></h1>
+  <div class="meta">
+    Эталон: <b>$etalon_name</b> &nbsp;|&nbsp;
+    Обработано: <b>$n_rows</b> &nbsp;|&nbsp;
+    Время: <b>$elapsed</b> &nbsp;|&nbsp;
+    Порог Match: <b>$threshold%</b><br/>
+    Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): $classic_weights_str<br/>
+    Semantic weight: <b>$semantic_weight_str</b> &nbsp;|&nbsp;
+    Эмбеддинги: <code>$embedding_info</code>
+  </div>
+
+  <div class="card" style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+    <div>
+      <div style="font-weight:600;margin-bottom:8px;">Эталон</div>
+      <img class="thumb" src="$new_thumb_b64" style="max-width:280px;"/>
+    </div>
+    <div class="kpi">
+      <div><span>Всего</span><b>$n_rows</b></div>
+      <div><span>HIGH</span><b style="color:#c62828;">$count_high</b></div>
+      <div><span>MEDIUM</span><b style="color:#ef6c00;">$count_medium</b></div>
+      <div><span>LOW</span><b style="color:#2e7d32;">$count_low</b></div>
+      <div><span>С семантикой</span><b>$count_with_sem</b></div>
+      <div><span>Макс Total%</span><b>$max_total%</b><small>$max_name</small></div>
+    </div>
+  </div>
+
+  $gallery_html
+
+  <div style="margin:12px 0;">
+    <input id="search" placeholder="Фильтр по имени..."
+           style="padding:8px 12px;border:1px solid #ccc;border-radius:6px;width:260px;"/>
+    <label style="margin-left:12px;font-size:13px;">
+      <input type="checkbox" id="showSem" $sem_checked/>
+      показать семантику (CLIP / DINO / Sem)
+    </label>
+    <span style="margin-left:12px;color:#666;font-size:13px;">
+      Клик по заголовку — сортировка
+    </span>
+  </div>
+
+  <table id="resultTable">
+    <thead>
+      <tr>
+        <th data-k="i">#</th>
+        <th data-k="name">Файл</th>
+        <th data-k="total">Total %</th>
+        <th data-k="sift">SIFT %</th>
+        <th data-k="orb">ORB %</th>
+        <th data-k="color">Color %</th>
+        <th data-k="phash">pHash %</th>
+        <th data-k="ssim">SSIM %</th>
+        <th data-k="shape">Shape %</th>
+        <th class="sem-col" data-k="clip">CLIP %</th>
+        <th class="sem-col" data-k="dino">DINO %</th>
+        <th class="sem-col" data-k="semantic">Sem %</th>
+        <th data-k="inliers">Inl</th>
+        <th>Risk</th>
+        <th>Match</th>
+      </tr>
+    </thead>
+    <tbody>$rows_html</tbody>
+  </table>
+
+  <script>
+    const table = document.getElementById('resultTable');
+    const tbody = table.querySelector('tbody');
+    const search = document.getElementById('search');
+    const showSem = document.getElementById('showSem');
+    let sortDir = 1, lastKey = 'total';
+
+    function toggleSem() {
+      const show = showSem.checked;
+      document.querySelectorAll('.sem-col').forEach(el => {
+        el.style.display = show ? '' : 'none';
+      });
+    }
+    if (showSem) showSem.addEventListener('change', toggleSem);
+    toggleSem();
+
+    function parseVal(tr, key) {
+      if (key === 'name') return tr.dataset.name.toLowerCase();
+      if (key === 'total') return parseFloat(tr.dataset.total);
+      if (key === 'i') return parseInt(tr.cells[0].textContent);
+      const ths = table.querySelectorAll('thead th');
+      let idx = -1;
+      ths.forEach((th, j) => { if (th.dataset.k === key) idx = j; });
+      if (idx < 0) return 0;
+      const txt = tr.cells[idx].textContent.trim();
+      if (txt === '—') return -1;
+      const m = txt.match(/([0-9.]+)%/);
+      return m ? parseFloat(m[1]) : (parseFloat(txt) || 0);
+    }
+
+    table.querySelectorAll('th[data-k]').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.k;
+        if (lastKey === key) sortDir *= -1;
+        else { lastKey = key; sortDir = (key === 'name' ? 1 : -1); }
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const va = parseVal(a, key), vb = parseVal(b, key);
+          if (typeof va === 'string') return sortDir * va.localeCompare(vb);
+          return sortDir * (vb - va);
+        });
+        rows.forEach(r => tbody.appendChild(r));
+        rows.forEach((r, i) => { r.cells[0].textContent = i + 1; });
+      });
+    });
+
+    search.addEventListener('input', () => {
+      const q = search.value.toLowerCase();
+      tbody.querySelectorAll('tr').forEach(tr => {
+        tr.style.display = tr.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

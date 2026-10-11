@@ -1046,7 +1046,15 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
                     conf = min(1.0, inl / max(1, min_inliers))
                     purity = inl / max(1, good_n)
                     s_score = 100.0 * raw * conf * (0.7 + 0.3 * purity)
-                    extra = (good, mask, H)
+                    # cv2.DMatch не сериализуется pickle'ом (падает при
+                    # передаче результата из worker-процесса в main).
+                    # Храним только три числа на матч — этого достаточно
+                    # для восстановления DMatch при отрисовке.
+                    good_serializable = [
+                        (int(m.queryIdx), int(m.trainIdx), float(m.distance))
+                        for m in good
+                    ]
+                    extra = (good_serializable, mask, H)
         except Exception:
             s_score = 0.0
 
@@ -1884,7 +1892,15 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
             good, mask, _ = extra
             kp2_list = [cv2.KeyPoint(float(pt[0]), float(pt[1]), 1)
                         for pt in kp2_pts]
-            inlier_matches = [m for m, ok in zip(good, mask.ravel().tolist()) if ok]
+            # good приходит из worker-процесса как список кортежей
+            # (queryIdx, trainIdx, distance), а drawMatches ждёт
+            # cv2.DMatch — восстанавливаем объекты только здесь,
+            # в main-процессе (pickle через IPC уже не нужен).
+            inlier_matches = [
+                cv2.DMatch(int(q), int(t), float(d))
+                for (q, t, d), ok in zip(good, mask.ravel().tolist())
+                if ok
+            ]
             if len(inlier_matches) > 150:
                 inlier_matches = inlier_matches[:150]
             vis = cv2.drawMatches(
