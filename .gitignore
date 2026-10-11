@@ -1,0 +1,37 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# --- Кэши скрипта compare_trademarks ---
+cache/
+cache/pkl/
+*.pkl
+*.pkl.tmp
+
+# --- Логи и отчёты ---
+logs/
+reports/
+*.log
+
+# --- Визуализации (создаются в CWD при --visualize) ---
+top*_matches_*.jpg
+top1_matches.jpg
+
+# --- Отчёты ---
+*.csv
+*.json
+# но не трогаем конфиги:
+!package.json
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
