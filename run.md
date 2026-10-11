@@ -1,8 +1,8 @@
-python compare_trademarks_v10.py --new test_logos/adidas2.jpg --collections logos --embedding none --visualize --html --recursive
-
-python compare_trademarks_v10.py --new test_logos/adidas2.jpg --collections logos --embedding none --visualize --html --recursive
-
 python compare_trademarks_v10.py --new test_logos/adidas2.jpg --collections logos --embedding both --semantic-weight 0.25 --cache --visualize --html --recursive
+
+python compare_trademarks_v10.py --new test_logos/adidas2.jpg --collections logos --visualize --cache --embedding none --visualize --html --recursive
+
+python compare_trademarks_v10.py --new test_logos/adidas2.jpg --collections logos --embedding none --visualize --html --recursive
 
 python compare_trademarks_v10.py --new test_logos/citroen.jpg --collections logos --embedding both --semantic-weight 0.25 --cache --visualize --html
 

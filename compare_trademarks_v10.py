@@ -608,7 +608,7 @@ def load_emb_cache(cache_path: Path) -> Dict[str, EmbCachedItem]:
 
 
 def save_emb_cache(cache_path: Path, data: Dict[str, EmbCachedItem],
-                   max_entries: int = 10000) -> None:
+                   max_entries: int = 300000) -> None:
     try:
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         if len(data) > max_entries:
