@@ -1,41 +1,0 @@
-[log] Script  : compare_trademarks_v10.py
-[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_175828.log
-[log] Started : 2026-10-11 17:58:28
-17:58:28 | INFO    | ==========================================================================================
-17:58:28 | INFO    | Запуск: 2026-10-11 17:58:28 | compare_trademarks_v10
-17:58:28 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_175828.log
-17:58:28 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_175828.html
-17:58:28 | INFO    | semantic_weight = 0: Total% = classic_total (6 классических метрик). CLIP/DINO/Sem не вычисляются.
-17:58:28 | INFO    | ==========================================================================================
-17:58:28 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
-17:58:28 | INFO    | Semantic weight: 0.00
-17:58:29 | INFO    | Кэш SIFT: 16 из .tm_cache_v2.pkl
-17:58:29 | INFO    | Файлов коллекции: 16 (recursive=False)
-17:58:29 | INFO    | semantic_weight=0 — модели CLIP/DINOv2 не загружаются
-17:58:29 | INFO    | Эмбеддинги: skipped (semantic_weight=0)
-17:58:29 | INFO    | Запуск 16 задач (workers=auto, executor=ProcessPoolExecutor)...
-Сравнение:   0%|                                                                                 | 0/16 [00:00<?, ?file/s]Сравнение:   6%|████▌                                                                    | 1/16 [00:00<00:13,  1.14file/s]Сравнение:  12%|█████████▏                                                               | 2/16 [00:01<00:06,  2.31file/s]Сравнение:  75%|██████████████████████████████████████████████████████                  | 12/16 [00:01<00:00, 18.06file/s]Сравнение: 100%|████████████████████████████████████████████████████████████████████████| 16/16 [00:01<00:00, 12.88file/s]
-  #  Файл                           Total%   SIFT%   ORB%   Color%   pHash%   SSIM%   Shape%   CLIP%   DINO%    Sem%   Inl  Risk   Match
-----------------------------------------------------------------------------------------------------------------------------------------
-  1  citroen.jpg                      9.34    0.00   0.00    20.10    63.28    0.00     0.00    —      —      —       0  LOW    
-  2  citroen-text.jpg                 8.54    0.00   0.00    19.96    55.47    0.00     0.00    —      —      —       0  LOW    
-  3  kia.jpg                          7.97    0.00   0.00    20.87    48.44    0.00     0.00    —      —      —       0  LOW    
-  4  airness.jpg                      6.58    0.00   0.00    12.10    47.66    0.00     0.00    —      —      —       0  LOW    
-  5  collage.jpeg                     6.40    0.00   0.00     8.84    50.78    0.00     0.00    —      —      —       0  LOW    
-  6  ferrari.jpg                      6.03    0.00   0.00     6.36    50.78    0.00     0.00    —      —      —       0  LOW    
-  7  umbro.jpg                        5.61    0.00   0.00     0.92    54.69    0.00     0.00    —      —      —       0  LOW    
-  8  peugeot.jpg                      5.47    0.00   0.00     0.53    53.91    0.00     0.00    —      —      —       0  LOW    
-  9  nike.jpg                         5.45    0.00   0.00     0.92    53.12    0.00     0.00    —      —      —       0  LOW    
- 10  puma.jpg                         5.38    0.00   0.00     0.96    52.34    0.00     0.00    —      —      —       0  LOW    
- 11  adidas-text.jpg                  5.14    0.00   0.00     0.93    50.00    0.00     0.00    —      —      —       0  LOW    
- 12  gucci.jpg                        5.14    0.00   0.00     0.92    50.00    0.00     0.00    —      —      —       0  LOW    
- 13  mercedes.jpg                     5.06    0.00   0.00     0.94    49.22    0.00     0.00    —      —      —       0  LOW    
- 14  adidas.jpg                       5.06    0.00   0.00     0.92    49.22    0.00     0.00    —      —      —       0  LOW    
- 15  reebok.jpg                       4.99    0.00   0.00     0.97    48.44    0.00     0.00    —      —      —       0  LOW    
- 16  puma-text.jpg                    4.98    0.00   0.00     0.91    48.44    0.00     0.00    —      —      —       0  LOW    
-HTML-отчёт сохранён: D:\git\compare_trademarks\reports\compare_trademarks_20261011_175828.html (шаблон: D:\git\compare_trademarks\compare_trademarks_report.html)
-17:58:30 | INFO    | Кэш SIFT: 16 -> .tm_cache_v2.pkl
-17:58:30 | INFO    | Готово 16 за 1.9 с. HIGH=0  MEDIUM=0  LOW=16
-17:58:30 | INFO    | Завершение: 2026-10-11 17:58:30 (всего 0:00:01.853098)
-17:58:30 | INFO    | Полный лог: D:\git\compare_trademarks\logs\compare_trademarks_20261011_175828.log
-[log] Finished: 2026-10-11 17:58:30

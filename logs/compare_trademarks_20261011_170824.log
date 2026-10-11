@@ -1,9 +1,0 @@
-[log] Script  : compare_trademarks_v10.py
-[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_170824.log
-[log] Started : 2026-10-11 17:08:24
-17:08:24 | INFO    | ==========================================================================================
-17:08:24 | INFO    | Запуск: 2026-10-11 17:08:24 | compare_trademarks_v10
-17:08:24 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_170824.log
-17:08:24 | INFO    | semantic_weight = 0: Total%% совпадает с v07 (CLIP/DINO/Sem — только информационные колонки).
-17:08:24 | INFO    | ==========================================================================================
-17:08:24 | ERROR   | Не найден файл: new.jpg

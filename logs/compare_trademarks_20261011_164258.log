@@ -1,8 +1,0 @@
-[log] Script  : compare_trademarks_v07.py
-[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_164258.log
-[log] Started : 2026-10-11 16:42:58
-16:42:58 | INFO    | ==========================================================================================
-16:42:58 | INFO    | Запуск: 2026-10-11 16:42:58 | compare_trademarks_v05+
-16:42:58 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_164258.log
-16:42:58 | INFO    | ==========================================================================================
-16:42:58 | ERROR   | Не найден файл: new.jpg

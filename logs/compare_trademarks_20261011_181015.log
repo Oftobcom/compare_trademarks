@@ -1,44 +1,0 @@
-[log] Script  : compare_trademarks_v10.py
-[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_181015.log
-[log] Started : 2026-10-11 18:10:15
-18:10:15 | INFO    | ==========================================================================================
-18:10:15 | INFO    | Запуск: 2026-10-11 18:10:15 | compare_trademarks_v10
-18:10:15 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_181015.log
-18:10:15 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_181015.html
-18:10:15 | WARNING | semantic_weight > 0: Total% смешивает классические метрики и семантику. Пороги --threshold / --risk-* смещаются относительно classic-only режима.
-18:10:15 | INFO    | ==========================================================================================
-18:10:15 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
-18:10:15 | INFO    | Semantic weight: 0.25
-18:10:17 | INFO    | Кэш SIFT: 16 из .tm_cache_v2.pkl
-18:10:18 | INFO    | Файлов коллекции: 20429 (recursive=True)
-18:10:30 | INFO    | [EMB] Загрузка CLIP 'openai/clip-vit-base-patch32' на cpu (transformers)...
-Loading weights:   0%|                                                                            | 0/398 [00:00<?, ?it/s]Loading weights: 100%|███████████████████████████████████████████████████████████████| 398/398 [00:00<00:00, 14639.80it/s]
-18:10:32 | INFO    | [EMB] CLIP (transformers) загружен
-18:10:32 | INFO    | [EMB] Загрузка DINOv2 'facebook/dinov2-base' на cpu (transformers)...
-Loading weights:   0%|                                                                            | 0/223 [00:00<?, ?it/s]Loading weights:   6%|████▏                                                             | 14/223 [00:00<00:01, 138.78it/s]Loading weights:  16%|██████████▎                                                       | 35/223 [00:00<00:01, 151.54it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████| 223/223 [00:00<00:00, 704.64it/s]
-18:10:34 | INFO    | [EMB] DINOv2 (transformers) загружен
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-18:10:34 | INFO    | [EMB] encode_clip_batch error: 'BaseModelOutputWithPooling' object has no attribute 'norm'
-Traceback (most recent call last):
-  File "d:\git\compare_trademarks\compare_trademarks_v10.py", line 790, in encode_clip_batch
-    feats = feats / feats.norm(p=2, dim=-1, keepdim=True)
-                    ^^^^^^^^^^
-AttributeError: 'BaseModelOutputWithPooling' object has no attribute 'norm'
-
-18:10:35 | INFO    | Кэш эмбеддингов: 16 из .emb_cache_v10.pkl
-18:10:42 | INFO    | Эмбеддинги: из кэша 0/20429, к подсчёту 20429
-Embeddings:   0%|                                                                             | 0/1277 [00:00<?, ?batch/s]18:10:44 | INFO    | [EMB] encode_clip_batch error: 'BaseModelOutputWithPooling' object has no attribute 'norm'
-Traceback (most recent call last):
-  File "d:\git\compare_trademarks\compare_trademarks_v10.py", line 790, in encode_clip_batch
-    feats = feats / feats.norm(p=2, dim=-1, keepdim=True)
-                    ^^^^^^^^^^
-AttributeError: 'BaseModelOutputWithPooling' object has no attribute 'norm'
-
-Embeddings:   0%|                                                                   | 1/1277 [00:13<4:49:11, 13.60s/batch]18:10:58 | INFO    | [EMB] encode_clip_batch error: 'BaseModelOutputWithPooling' object has no attribute 'norm'
-Traceback (most recent call last):
-  File "d:\git\compare_trademarks\compare_trademarks_v10.py", line 790, in encode_clip_batch
-    feats = feats / feats.norm(p=2, dim=-1, keepdim=True)
-                    ^^^^^^^^^^
-AttributeError: 'BaseModelOutputWithPooling' object has no attribute 'norm'
-
-Embeddings:   0%|                                                                   | 1/1277 [00:18<6:35:52, 18.61s/batch]

@@ -1,23 +1,0 @@
-[log] Script  : compare_trademarks_v10.py
-[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_184251.log
-[log] Started : 2026-10-11 18:42:51
-18:42:51 | INFO    | ==========================================================================================
-18:42:51 | INFO    | Запуск: 2026-10-11 18:42:51 | compare_trademarks_v10
-18:42:51 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_184251.log
-18:42:51 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_184251.html
-18:42:51 | WARNING | semantic_weight > 0: Total% смешивает классические метрики и семантику. Пороги --threshold / --risk-* смещаются относительно classic-only режима.
-18:42:51 | INFO    | ==========================================================================================
-18:42:51 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
-18:42:51 | INFO    | Semantic weight: 0.25
-18:42:51 | INFO    | Кэш SIFT: 0 из cache\pkl\.tm_cache.pkl
-18:42:52 | INFO    | Файлов коллекции: 11281 (recursive=True)
-18:43:06 | INFO    | [EMB] Загрузка CLIP 'openai/clip-vit-base-patch32' на cpu (transformers)...
-Loading weights:   0%|                                                                            | 0/398 [00:00<?, ?it/s]Loading weights: 100%|███████████████████████████████████████████████████████████████| 398/398 [00:00<00:00, 12267.29it/s]
-18:43:08 | INFO    | [EMB] CLIP (transformers) загружен
-18:43:08 | INFO    | [EMB] Загрузка DINOv2 'facebook/dinov2-base' на cpu (transformers)...
-Loading weights:   0%|                                                                            | 0/223 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Loading weights:   6%|████▏                                                             | 14/223 [00:00<00:01, 125.56it/s]Loading weights:  15%|█████████▊                                                        | 33/223 [00:00<00:01, 156.15it/s]Loading weights:  22%|██████████████▌                                                   | 49/223 [00:00<00:01, 156.32it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████| 223/223 [00:00<00:00, 545.99it/s]
-18:43:10 | INFO    | [EMB] DINOv2 (transformers) загружен
-18:43:11 | INFO    | Кэш эмбеддингов: 0 из cache\pkl\.emb_cache.pkl
-18:43:15 | INFO    | Эмбеддинги: из кэша 0/11281, к подсчёту 11281
-Embeddings:   0%|                                                                              | 0/706 [00:00<?, ?batch/s]Embeddings:   0%|                                                                    | 1/706 [00:15<3:02:57, 15.57s/batch]Embeddings:   0%|▏                                                                   | 2/706 [00:33<3:19:43, 17.02s/batch]Embeddings:   0%|▎                                                                   | 3/706 [00:49<3:14:35, 16.61s/batch]Embeddings:   1%|▍                                                                   | 4/706 [01:05<3:11:31, 16.37s/batch]Embeddings:   1%|▍                                                                   | 4/706 [01:16<3:44:06, 19.15s/batch]

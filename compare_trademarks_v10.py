@@ -110,6 +110,7 @@ DEFAULT_TEMPLATE_NAME = "compare_trademarks_report.html"
 LOG_DIR_DEFAULT = "logs"
 REPORTS_DIR_DEFAULT = "reports"
 PKL_CACHE_DIR_DEFAULT = "cache/pkl"
+HTML_TOP_N_DEFAULT = 30
 CACHE_VERSION = 2
 EMB_CACHE_VERSION = 1
 RISK_HIGH_DEFAULT = 60.0
@@ -1173,12 +1174,19 @@ def _row_html(i: int, r: Dict[str, Any], threshold: float) -> str:
                 else ("#fff" if i % 2 else "#fafafa")))
 
     name_e = _html.escape(str(r["name"]))
+    path_e = _html.escape(str(r.get("path", "")))
     return (
         f'<tr style="background:{bg};" data-total="{r["total"]:.2f}" '
         f'data-name="{name_e}">'
         f'<td style="text-align:right;padding:5px 6px;">{i}</td>'
-        f'<td style="padding:5px 6px;font-family:monospace;max-width:200px;'
-        f'overflow:hidden;text-overflow:ellipsis;" title="{name_e}">{name_e}</td>'
+        f'<td style="padding:5px 6px;font-family:monospace;max-width:280px;">'
+        f'<div style="font-weight:600;overflow:hidden;'
+        f'text-overflow:ellipsis;white-space:nowrap;" title="{name_e}">'
+        f'{name_e}</div>'
+        f'<div style="font-size:10px;color:#777;overflow:hidden;'
+        f'text-overflow:ellipsis;white-space:nowrap;" title="{path_e}">'
+        f'{path_e}</div>'
+        f'</td>'
         f'<td style="padding:5px 6px;">{_bar_html(r["total"], "#1976d2")}</td>'
         f'<td style="padding:5px 6px;">{_bar_html(r["sift"])}</td>'
         f'<td style="padding:5px 6px;">{_bar_html(r["orb"], "#7b1fa2")}</td>'
@@ -1300,7 +1308,6 @@ def make_html_report(
         "gallery_html": gallery_html,
         "rows_html": "".join(rows_html),
         "sem_visible_default": "table-row" if n_with_sem > 0 else "none",
-        "sem_checked": "checked" if n_with_sem > 0 else "",
     }
 
     out = string.Template(template_text).safe_substitute(subs)
@@ -1343,6 +1350,9 @@ def parse_args():
                         "перезапись)")
     p.add_argument("--html-dir", type=str, default=REPORTS_DIR_DEFAULT,
                    help="папка для HTML-отчётов (по умолчанию: reports)")
+    p.add_argument("--html-top", type=int, default=HTML_TOP_N_DEFAULT,
+               help="сколько строк писать в HTML (0 = все). "
+                    f"По умолчанию: {HTML_TOP_N_DEFAULT}")
 
     p.add_argument("--template", default=None,
                    help=f"путь к HTML-шаблону (по умолчанию: "
@@ -1856,7 +1866,14 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
     # ----- визуализация top-N -----
     top_vis_paths: List[Tuple[Path, str, float]] = []
     if args.visualize and rows:
-        k = max(1, args.top_vis)
+        # Визуализаций не больше, чем строк в HTML-таблице
+        vis_limit = args.top_vis
+        if args.html_top > 0:
+            vis_limit = min(vis_limit, args.html_top)
+        k = max(1, vis_limit)
+        vis_dir = (html_path.parent if html_path is not None
+                   else Path(REPORTS_DIR_DEFAULT))
+        vis_dir.mkdir(parents=True, exist_ok=True)
         for idx in range(min(k, len(rows))):
             best = rows[idx]
             extra = best.get("_extra")
@@ -1877,7 +1894,7 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS,
             )
             out_name = f"top{idx + 1}_matches_{Path(best['name']).stem}.jpg"
-            out_path = Path(out_name)
+            out_path = vis_dir / out_name
             cv2.imwrite(str(out_path), vis)
             logger.info(f"Визуализация top-{idx + 1}: {out_path} "
                         f"({best['name']}, Total={best['total']:.2f}%)")
@@ -1885,14 +1902,21 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
 
         if top_vis_paths:
             try:
-                shutil.copy(str(top_vis_paths[0][0]), "top1_matches.jpg")
+                shutil.copy(str(top_vis_paths[0][0]),
+                            str(vis_dir / "top1_matches.jpg"))
             except Exception:
                 pass
 
     # ----- HTML -----
     if html_path is not None:
+        # Top-N для HTML (CSV/JSON/консоль — по-прежнему все строки).
+        # Отрицательное значение трактуем как 0 (все строки).
+        html_top = max(0, args.html_top)
+        html_rows = rows if html_top == 0 else rows[:html_top]
         clean_rows = [{k: v for k, v in r.items() if not k.startswith("_")}
-                      for r in rows]
+                      for r in html_rows]
+        logger.info(f"HTML: включено строк {len(clean_rows)} "
+                    f"из {len(rows)} (--html-top={html_top})")
         template_path = Path(args.template) if args.template else None
         make_html_report(
             clean_rows, etalon_path, img_new_raw, args.threshold,
