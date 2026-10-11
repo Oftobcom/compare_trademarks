@@ -1,0 +1,36 @@
+[log] Script  : compare_trademarks_v07.py
+[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_164308.log
+[log] Started : 2026-10-11 16:43:08
+16:43:08 | INFO    | ==========================================================================================
+16:43:08 | INFO    | Запуск: 2026-10-11 16:43:08 | compare_trademarks_v05+
+16:43:08 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_164308.log
+16:43:08 | INFO    | ==========================================================================================
+16:43:09 | INFO    | Кэш: 0 записей из .tm_cache_v2.pkl
+16:43:09 | INFO    | Веса: SIFT=0.35 ORB=0.10 Color=0.15 pHash=0.10 SSIM=0.15 Shape=0.15
+16:43:09 | INFO    | Файлов к обработке: 16
+16:43:09 | INFO    | Запуск 16 задач (workers=auto, executor=ProcessPoolExecutor)...
+[1/16] citroen-text.jpg                                            [2/16] kia.jpg                                                     [3/16] adidas.jpg                                                  [4/16] citroen.jpg                                                 [5/16] adidas-text.jpg                                             [6/16] gucci.jpg                                                   [7/16] airness.jpg                                                 [8/16] ferrari.jpg                                                 [9/16] nike.jpg                                                    [10/16] collage.jpeg                                                [11/16] mercedes.jpg                                                [12/16] puma.jpg                                                    [13/16] peugeot.jpg                                                 [14/16] reebok.jpg                                                  [15/16] puma-text.jpg                                               [16/16] umbro.jpg                                                   
+  #  Файл                               Total%   SIFT%   ORB%   Color%   pHash%   SSIM%   Shape%   Inl      KP n/c  Risk   Match
+--------------------------------------------------------------------------------------------------------------------------------
+  1  citroen.jpg                          9.34    0.00   0.00    20.10    63.28    0.00     0.00     0    69/30     LOW    
+  2  citroen-text.jpg                     8.54    0.00   0.00    19.96    55.47    0.00     0.00     0    69/84     LOW    
+  3  kia.jpg                              7.97    0.00   0.00    20.87    48.44    0.00     0.00     0    69/334    LOW    
+  4  airness.jpg                          6.58    0.00   0.00    12.10    47.66    0.00     0.00     0    69/113    LOW    
+  5  collage.jpeg                         6.40    0.00   0.00     8.84    50.78    0.00     0.00     0    69/959    LOW    
+  6  ferrari.jpg                          6.03    0.00   0.00     6.36    50.78    0.00     0.00     0    69/428    LOW    
+  7  umbro.jpg                            5.61    0.00   0.00     0.92    54.69    0.00     0.00     0    69/60     LOW    
+  8  peugeot.jpg                          5.47    0.00   0.00     0.53    53.91    0.00     0.00     0    69/127    LOW    
+  9  nike.jpg                             5.45    0.00   0.00     0.92    53.12    0.00     0.00     0    69/4      LOW    
+ 10  puma.jpg                             5.38    0.00   0.00     0.96    52.34    0.00     0.00     0    69/41     LOW    
+ 11  adidas-text.jpg                      5.14    0.00   0.00     0.93    50.00    0.00     0.00     0    69/65     LOW    
+ 12  gucci.jpg                            5.14    0.00   0.00     0.92    50.00    0.00     0.00     0    69/31     LOW    
+ 13  mercedes.jpg                         5.06    0.00   0.00     0.94    49.22    0.00     0.00     0    69/66     LOW    
+ 14  adidas.jpg                           5.06    0.00   0.00     0.92    49.22    0.00     0.00     0    69/11     LOW    
+ 15  reebok.jpg                           4.99    0.00   0.00     0.97    48.44    0.00     0.00     0    69/44     LOW    
+ 16  puma-text.jpg                        4.98    0.00   0.00     0.91    48.44    0.00     0.00     0    69/34     LOW    
+HTML-отчёт сохранён: report.html
+16:43:12 | INFO    | Кэш обновлён: 16 записей → .tm_cache_v2.pkl
+16:43:12 | INFO    | Обработано 16 изображений за 3.8 с. HIGH=0  MEDIUM=0  LOW=16
+16:43:12 | INFO    | Завершение: 2026-10-11 16:43:12 (всего 0:00:03.843071)
+16:43:12 | INFO    | Полный лог: D:\git\compare_trademarks\logs\compare_trademarks_20261011_164308.log
+[log] Finished: 2026-10-11 16:43:12

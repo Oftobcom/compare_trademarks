@@ -1,0 +1,23 @@
+[log] Script  : compare_trademarks_v10.py
+[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_181813.log
+[log] Started : 2026-10-11 18:18:13
+18:18:13 | INFO    | ==========================================================================================
+18:18:13 | INFO    | Запуск: 2026-10-11 18:18:13 | compare_trademarks_v10
+18:18:13 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_181813.log
+18:18:13 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_181813.html
+18:18:13 | WARNING | semantic_weight > 0: Total% смешивает классические метрики и семантику. Пороги --threshold / --risk-* смещаются относительно classic-only режима.
+18:18:13 | INFO    | ==========================================================================================
+18:18:13 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
+18:18:13 | INFO    | Semantic weight: 0.25
+18:18:13 | INFO    | Кэш SIFT: 0 из .tm_cache.pkl
+18:18:15 | INFO    | Файлов коллекции: 20429 (recursive=True)
+18:18:29 | INFO    | [EMB] Загрузка CLIP 'openai/clip-vit-base-patch32' на cpu (transformers)...
+Loading weights:   0%|                                                                            | 0/398 [00:00<?, ?it/s]Loading weights: 100%|███████████████████████████████████████████████████████████████| 398/398 [00:00<00:00, 13567.62it/s]
+18:18:31 | INFO    | [EMB] CLIP (transformers) загружен
+18:18:31 | INFO    | [EMB] Загрузка DINOv2 'facebook/dinov2-base' на cpu (transformers)...
+Loading weights:   0%|                                                                            | 0/223 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   5%|███▎                                                               | 11/223 [00:00<00:02, 74.79it/s]Loading weights:   9%|█████▋                                                             | 19/223 [00:00<00:03, 67.96it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████| 223/223 [00:00<00:00, 770.12it/s]
+18:18:32 | INFO    | [EMB] DINOv2 (transformers) загружен
+18:18:33 | INFO    | Кэш эмбеддингов: 0 из .emb_cache.pkl
+18:18:40 | INFO    | Эмбеддинги: из кэша 0/20429, к подсчёту 20429
+Embeddings:   0%|                                                                             | 0/1277 [00:00<?, ?batch/s]Embeddings:   0%|                                                                   | 1/1277 [00:12<4:32:53, 12.83s/batch]Embeddings:   0%|                                                                   | 2/1277 [00:25<4:27:47, 12.60s/batch]Embeddings:   0%|▏                                                                  | 3/1277 [00:38<4:32:26, 12.83s/batch]Embeddings:   0%|▏                                                                  | 4/1277 [00:51<4:37:24, 13.07s/batch]Embeddings:   0%|▎                                                                  | 5/1277 [01:04<4:34:07, 12.93s/batch]Embeddings:   0%|▎                                                                  | 6/1277 [01:17<4:31:14, 12.80s/batch]Embeddings:   1%|▎                                                                  | 7/1277 [01:29<4:28:27, 12.68s/batch]Embeddings:   1%|▍                                                                  | 8/1277 [01:42<4:28:18, 12.69s/batch]Embeddings:   1%|▍                                                                  | 9/1277 [01:54<4:26:42, 12.62s/batch]Embeddings:   1%|▌                                                                 | 10/1277 [02:07<4:24:56, 12.55s/batch]Embeddings:   1%|▌                                                                 | 11/1277 [02:20<4:31:11, 12.85s/batch]Embeddings:   1%|▌                                                                 | 12/1277 [02:34<4:37:14, 13.15s/batch]Embeddings:   1%|▋                                                                 | 13/1277 [02:49<4:50:40, 13.80s/batch]Embeddings:   1%|▋                                                                 | 14/1277 [03:05<5:02:44, 14.38s/batch]Embeddings:   1%|▊                                                                 | 15/1277 [03:21<5:13:16, 14.89s/batch]Embeddings:   1%|▊                                                                 | 16/1277 [03:37<5:18:05, 15.14s/batch]Embeddings:   1%|▉                                                                 | 17/1277 [03:52<5:21:22, 15.30s/batch]Embeddings:   1%|▉                                                                 | 17/1277 [04:06<5:04:56, 14.52s/batch]

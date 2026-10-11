@@ -1,0 +1,13 @@
+[log] Script  : compare_trademarks_v10.py
+[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_171541.log
+[log] Started : 2026-10-11 17:15:41
+17:15:41 | INFO    | ==========================================================================================
+17:15:41 | INFO    | Запуск: 2026-10-11 17:15:41 | compare_trademarks_v10
+17:15:41 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_171541.log
+17:15:41 | INFO    | semantic_weight = 0: Total%% совпадает с v07 (CLIP/DINO/Sem — только информационные колонки).
+17:15:41 | INFO    | ==========================================================================================
+17:15:41 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
+17:15:41 | INFO    | Semantic weight: 0.00
+17:15:42 | INFO    | Кэш SIFT: 16 из .tm_cache_v2.pkl
+17:15:42 | INFO    | Файлов коллекции: 16 (recursive=False)
+17:15:46 | INFO    | [EMB] transformers CLIP не удался: No module named 'transformers'. Пробую open_clip...

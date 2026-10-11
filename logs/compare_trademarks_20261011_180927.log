@@ -1,0 +1,10 @@
+[log] Script  : compare_trademarks_v10.py
+[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_180927.log
+[log] Started : 2026-10-11 18:09:27
+18:09:27 | INFO    | ==========================================================================================
+18:09:27 | INFO    | Запуск: 2026-10-11 18:09:27 | compare_trademarks_v10
+18:09:27 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_180927.log
+18:09:27 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_180927.html
+18:09:27 | WARNING | semantic_weight > 0: Total% смешивает классические метрики и семантику. Пороги --threshold / --risk-* смещаются относительно classic-only режима.
+18:09:27 | INFO    | ==========================================================================================
+18:09:27 | ERROR   | Не найден файл: live_logos\adidas2.jpg

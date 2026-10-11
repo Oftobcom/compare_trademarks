@@ -1,0 +1,12 @@
+[log] Script  : compare_trademarks_v10.py
+[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_184623.log
+[log] Started : 2026-10-11 18:46:23
+18:46:23 | INFO    | ==========================================================================================
+18:46:23 | INFO    | Запуск: 2026-10-11 18:46:23 | compare_trademarks_v10
+18:46:23 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_184623.log
+18:46:23 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_184623.html
+18:46:23 | WARNING | semantic_weight > 0: Total% смешивает классические метрики и семантику. Пороги --threshold / --risk-* смещаются относительно classic-only режима.
+18:46:23 | INFO    | ==========================================================================================
+18:46:23 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
+18:46:23 | INFO    | Semantic weight: 0.25
+18:46:23 | INFO    | Кэш SIFT: 0 из cache\pkl\.tm_cache.pkl

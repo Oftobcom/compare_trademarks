@@ -1,0 +1,65 @@
+[log] Script  : compare_trademarks_v10.py
+[log] Log file: D:\git\compare_trademarks\logs\compare_trademarks_20261011_175936.log
+[log] Started : 2026-10-11 17:59:36
+17:59:36 | INFO    | ==========================================================================================
+17:59:36 | INFO    | Запуск: 2026-10-11 17:59:36 | compare_trademarks_v10
+17:59:36 | INFO    | Лог-файл: D:\git\compare_trademarks\logs\compare_trademarks_20261011_175936.log
+17:59:36 | INFO    | HTML-отчёт: D:\git\compare_trademarks\reports\compare_trademarks_20261011_175936.html
+17:59:36 | WARNING | semantic_weight > 0: Total% смешивает классические метрики и семантику. Пороги --threshold / --risk-* смещаются относительно classic-only режима.
+17:59:36 | INFO    | ==========================================================================================
+17:59:36 | INFO    | Классические веса (SIFT,ORB,Color,pHash,SSIM,Shape): 0.35 0.10 0.15 0.10 0.15 0.15
+17:59:36 | INFO    | Semantic weight: 0.25
+17:59:36 | INFO    | Кэш SIFT: 16 из .tm_cache_v2.pkl
+17:59:36 | INFO    | Файлов коллекции: 16 (recursive=False)
+17:59:49 | INFO    | [EMB] Загрузка CLIP 'openai/clip-vit-base-patch32' на cpu (transformers)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|                                                                            | 0/398 [00:00<?, ?it/s]Loading weights: 100%|███████████████████████████████████████████████████████████████| 398/398 [00:00<00:00, 11566.41it/s]
+17:59:51 | INFO    | [EMB] CLIP (transformers) загружен
+17:59:51 | INFO    | [EMB] Загрузка DINOv2 'facebook/dinov2-base' на cpu (transformers)...
+Loading weights:   0%|                                                                            | 0/223 [00:00<?, ?it/s]Loading weights:  10%|██████▊                                                           | 23/223 [00:00<00:00, 228.98it/s]Loading weights:  21%|█████████████▌                                                    | 46/223 [00:00<00:01, 140.07it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████████| 223/223 [00:00<00:00, 684.23it/s]
+17:59:52 | INFO    | [EMB] DINOv2 (transformers) загружен
+17:59:52 | INFO    | [EMB] encode_clip_batch error: 'BaseModelOutputWithPooling' object has no attribute 'norm'
+Traceback (most recent call last):
+  File "d:\git\compare_trademarks\compare_trademarks_v10.py", line 790, in encode_clip_batch
+    feats = feats / feats.norm(p=2, dim=-1, keepdim=True)
+                    ^^^^^^^^^^
+AttributeError: 'BaseModelOutputWithPooling' object has no attribute 'norm'
+
+17:59:53 | INFO    | Кэш эмбеддингов: 16 из .emb_cache_v10.pkl
+17:59:53 | INFO    | Эмбеддинги: из кэша 0/16, к подсчёту 16
+Embeddings:   0%|                                                                                | 0/1 [00:00<?, ?batch/s]17:59:56 | INFO    | [EMB] encode_clip_batch error: 'BaseModelOutputWithPooling' object has no attribute 'norm'
+Traceback (most recent call last):
+  File "d:\git\compare_trademarks\compare_trademarks_v10.py", line 790, in encode_clip_batch
+    feats = feats / feats.norm(p=2, dim=-1, keepdim=True)
+                    ^^^^^^^^^^
+AttributeError: 'BaseModelOutputWithPooling' object has no attribute 'norm'
+
+Embeddings: 100%|████████████████████████████████████████████████████████████████████████| 1/1 [00:13<00:00, 13.83s/batch]Embeddings: 100%|████████████████████████████████████████████████████████████████████████| 1/1 [00:13<00:00, 13.83s/batch]
+18:00:07 | INFO    | Кэш эмбеддингов сохранён: 16 -> .emb_cache_v10.pkl
+18:00:07 | INFO    | Эмбеддинги: mode=both clip=ok(openai/clip-vit-base-patch32) dino=ok(facebook/dinov2-base) device=cpu
+18:00:07 | INFO    | Запуск 16 задач (workers=auto, executor=ProcessPoolExecutor)...
+Сравнение:   0%|                                                                                 | 0/16 [00:00<?, ?file/s]Сравнение:   6%|████▌                                                                    | 1/16 [00:01<00:15,  1.02s/file]Сравнение:  75%|██████████████████████████████████████████████████████                  | 12/16 [00:01<00:00, 14.41file/s]Сравнение: 100%|████████████████████████████████████████████████████████████████████████| 16/16 [00:01<00:00, 13.69file/s]
+  #  Файл                           Total%   SIFT%   ORB%   Color%   pHash%   SSIM%   Shape%   CLIP%   DINO%    Sem%   Inl  Risk   Match
+----------------------------------------------------------------------------------------------------------------------------------------
+  1  citroen.jpg                     20.60    0.00   0.00    20.10    63.28    0.00     0.00    —     54.36   54.36     0  LOW    
+  2  umbro.jpg                        8.50    0.00   0.00     0.92    54.69    0.00     0.00    —     17.18   17.18     0  LOW    
+  3  citroen-text.jpg                 7.93    0.00   0.00    19.96    55.47    0.00     0.00    —      6.11    6.11     0  LOW    
+  4  kia.jpg                          7.31    0.00   0.00    20.87    48.44    0.00     0.00    —      5.34    5.34     0  LOW    
+  5  mercedes.jpg                     5.85    0.00   0.00     0.94    49.22    0.00     0.00    —      8.20    8.20     0  LOW    
+  6  collage.jpeg                     5.79    0.00   0.00     8.84    50.78    0.00     0.00    —      3.96    3.96     0  LOW    
+  7  reebok.jpg                       5.77    0.00   0.00     0.97    48.44    0.00     0.00    —      8.11    8.11     0  LOW    
+  8  adidas.jpg                       5.71    0.00   0.00     0.92    49.22    0.00     0.00    —      7.67    7.67     0  LOW    
+  9  ferrari.jpg                      5.60    0.00   0.00     6.36    50.78    0.00     0.00    —      4.31    4.31     0  LOW    
+ 10  airness.jpg                      5.55    0.00   0.00    12.10    47.66    0.00     0.00    —      2.47    2.47     0  LOW    
+ 11  nike.jpg                         5.19    0.00   0.00     0.92    53.12    0.00     0.00    —      4.41    4.41     0  LOW    
+ 12  puma-text.jpg                    5.16    0.00   0.00     0.91    48.44    0.00     0.00    —      5.70    5.70     0  LOW    
+ 13  adidas-text.jpg                  5.13    0.00   0.00     0.93    50.00    0.00     0.00    —      5.12    5.12     0  LOW    
+ 14  peugeot.jpg                      4.90    0.00   0.00     0.53    53.91    0.00     0.00    —      3.17    3.17     0  LOW    
+ 15  puma.jpg                         4.36    0.00   0.00     0.96    52.34    0.00     0.00    —      1.31    1.31     0  LOW    
+ 16  gucci.jpg                        4.26    0.00   0.00     0.92    50.00    0.00     0.00    —      1.62    1.62     0  LOW    
+HTML-отчёт сохранён: D:\git\compare_trademarks\reports\compare_trademarks_20261011_175936.html (шаблон: D:\git\compare_trademarks\compare_trademarks_report.html)
+18:00:09 | INFO    | Кэш SIFT: 16 -> .tm_cache_v2.pkl
+18:00:09 | INFO    | Готово 16 за 32.7 с. HIGH=0  MEDIUM=0  LOW=16
+18:00:09 | INFO    | Завершение: 2026-10-11 18:00:09 (всего 0:00:32.728523)
+18:00:09 | INFO    | Полный лог: D:\git\compare_trademarks\logs\compare_trademarks_20261011_175936.log
+[log] Finished: 2026-10-11 18:00:09

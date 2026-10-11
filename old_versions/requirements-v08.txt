@@ -1,0 +1,20 @@
+# compare_trademarks v08 - CLIP + DINOv2 semantic search
+# Базовые зависимости (нужны для v01-v08)
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+tqdm>=4.66.0
+
+# Для семантики v08 (CLIP / DINOv2) - обязательно
+torch>=2.1.0
+torchvision>=0.16.0
+transformers>=4.40.0
+# accelerate нужен для transformers на GPU (опционально, но рекомендуется)
+accelerate>=0.28.0
+
+# Опционально: альтернативный бэкенд для CLIP (если не используешь transformers CLIP)
+# open-clip-torch>=2.24.0
+
+# Для разработки / тестов
+# pytest
+# black
