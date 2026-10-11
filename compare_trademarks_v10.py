@@ -562,7 +562,7 @@ def load_cache(cache_path: Path) -> Dict[str, CachedItem]:
 
 
 def save_cache(cache_path: Path, data: Dict[str, CachedItem],
-               max_entries: int = 5000) -> None:
+               max_entries: int = 300000) -> None:
     try:
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         if len(data) > max_entries:
