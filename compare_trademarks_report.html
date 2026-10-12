@@ -102,7 +102,7 @@
     function toggleSem() {
       const show = showSem.checked;
       document.querySelectorAll('.sem-col').forEach(el => {
-        el.style.display = show ? '' : 'none';
+        el.style.display = show ? 'table-cell' : 'none';
       });
     }
     if (showSem) showSem.addEventListener('change', toggleSem);
@@ -131,7 +131,7 @@
         rows.sort((a, b) => {
           const va = parseVal(a, key), vb = parseVal(b, key);
           if (typeof va === 'string') return sortDir * va.localeCompare(vb);
-          return sortDir * (vb - va);
+          return sortDir * (va - vb);
         });
         rows.forEach(r => tbody.appendChild(r));
         rows.forEach((r, i) => { r.cells[0].textContent = i + 1; });

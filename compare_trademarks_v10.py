@@ -30,6 +30,14 @@ compare_trademarks_v10.py — сравнение товарного знака �
 Пути к отдельным файлам можно переопределить: --cache-file /
 --embedding-cache-file.
 
+Имена файлов отчётов:
+  <html-dir>/<etalon_stem>_compare_<YYYYmmdd_HHMMSS>.html
+  <html-dir>/<etalon_stem>_top-match_<YYYYmmdd_HHMMSS>.jpg
+  <html-dir>/<etalon_stem>_top<N>-match_<YYYYmmdd_HHMMSS>.jpg
+
+  где <etalon_stem> — имя эталона без расширения (например, "citroen"
+  для --new citroen.jpg). Если задан --html PATH, используется PATH как есть.
+
 Примеры
 -------
   python compare_trademarks_v10.py --new new.jpg --collections base \
@@ -39,12 +47,12 @@ compare_trademarks_v10.py — сравнение товарного знака �
       --embedding clip --semantic-weight 0.25 --threshold 30
 
   python compare_trademarks_v10.py --embedding none      # без семантики
-
   python compare_trademarks_v10.py --template my_report.html --html out.html
-
-  python compare_trademarks_v10.py --html            # reports/<timestamp>.html
-  python compare_trademarks_v10.py --html-flat       # reports/compare_trademarks.html
+  python compare_trademarks_v10.py --html            # reports/<etalon_stem>_compare_<ts>.html
+  python compare_trademarks_v10.py --html-flat       # reports/<etalon_stem>_compare.html
   python compare_trademarks_v10.py --no-html         # без HTML-отчёта
+
+  --html-top N  — сколько строк писать в HTML (0 = все). По умолчанию 30.
 """
 
 from __future__ import annotations
@@ -56,7 +64,6 @@ import html as _html
 import json
 import logging
 import pickle
-import shutil
 import string
 import sys
 import time
@@ -221,18 +228,20 @@ def _resolve_log_path(explicit: Optional[str],
 def _resolve_html_path(explicit: Optional[str],
                        flat: bool,
                        no_html: bool,
-                       html_dir: str = REPORTS_DIR_DEFAULT) -> Optional[Path]:
+                       html_dir: str = REPORTS_DIR_DEFAULT,
+                       prefix: str = SCRIPT_BASENAME,
+                       ts: Optional[str] = None) -> Optional[Path]:
     """
     Приоритеты:
       no_html=True          → None
-      explicit == "auto"    → reports/compare_trademarks_<ts>.html
+      explicit == "auto"    → <html_dir>/<prefix>_compare_<ts>.html
       explicit — путь       → этот путь
-      flat=True             → reports/compare_trademarks.html (перезапись)
+      flat=True             → <html_dir>/<prefix>_compare.html (перезапись)
       по умолчанию (None)   → не генерировать (обратная совместимость)
 
-    Отличие от _resolve_log_path: по умолчанию (explicit=None)
-    HTML НЕ создаётся. Чтобы получить авто-путь — надо передать
-    --html без аргумента (тогда explicit == "auto").
+    prefix — обычно stem эталона (например, "citroen").
+    ts     — единый timestamp, разделяемый с именами top-match-файлов.
+             Если не задан — генерируется здесь.
     """
     if no_html:
         return None
@@ -243,10 +252,11 @@ def _resolve_html_path(explicit: Optional[str],
     if explicit == "auto" or flat:
         out_dir = Path(html_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
+        if ts is None:
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         if flat:
-            return out_dir / f"{SCRIPT_BASENAME}.html"
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return out_dir / f"{SCRIPT_BASENAME}_{ts}.html"
+            return out_dir / f"{prefix}_compare.html"
+        return out_dir / f"{prefix}_compare_{ts}.html"
     return None
 
 
@@ -776,8 +786,8 @@ class EmbeddingManager:
             self._clip_available = True
             self._log("[EMB] CLIP (transformers) загружен")
             return True
-        except Exception as e:                          # ← было "as e_hf", стало "as e"
-            err_hf = f"{type(e).__name__}: {e}"         # ← сохранили текст ДО выхода из except
+        except Exception as e:
+            err_hf = f"{type(e).__name__}: {e}"
             self._log(f"[EMB] transformers CLIP не удался: {err_hf}. "
                       f"Пробую open_clip...")
 
@@ -797,7 +807,7 @@ class EmbeddingManager:
             self._log("[EMB] CLIP (open_clip) загружен")
             return True
         except Exception as e_open:
-            self._log(f"[EMB] CLIP недоступен (transformers: {err_hf}; "  # ← err_hf вместо e_hf
+            self._log(f"[EMB] CLIP недоступен (transformers: {err_hf}; "
                       f"open_clip: {e_open})")
             return False
 
@@ -869,8 +879,8 @@ class EmbeddingManager:
             self._dino_available = True
             self._log("[EMB] DINOv2 (transformers) загружен")
             return True
-        except Exception as e:                          # ← было "as e_hf"
-            err_hf = f"{type(e).__name__}: {e}"         # ← сохранили текст
+        except Exception as e:
+            err_hf = f"{type(e).__name__}: {e}"
             self._log(f"[EMB] transformers DINOv2 не удался: {err_hf}. "
                       f"Пробую torch.hub...")
 
@@ -887,7 +897,7 @@ class EmbeddingManager:
             self._log(f"[EMB] DINOv2 (torch.hub '{name}') загружен")
             return True
         except Exception as e_hub:
-            self._log(f"[EMB] DINOv2 недоступен (transformers: {err_hf}; "  # ← err_hf
+            self._log(f"[EMB] DINOv2 недоступен (transformers: {err_hf}; "
                       f"hub: {e_hub})")
             return False
 
@@ -946,7 +956,7 @@ class EmbeddingManager:
 #   13 orb_features          14 classic_weights_6   15 cached_item
 #   16 ignore_white          17 white_thresh        18 risk_high
 #   19 risk_medium           20 semantic_weight     21 clip_score_pre
-#   22 dino_score_pre
+#   22 dino_score_pre        23 need_cache
 # ============================================================================
 
 def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
@@ -974,6 +984,7 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
         semantic_weight,      # ∈ [0, 1]
         clip_score_pre,       # ∈ [0, 100] | None
         dino_score_pre,       # ∈ [0, 100] | None
+        need_cache,           # bool
     ) = task
 
     path = Path(path_str)
@@ -1008,11 +1019,14 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
         _, orb_des2 = orb.detectAndCompute(gray2, None)
         h2 = phash(img2)
         n2 = 0 if kp2 is None else len(kp2)
-        updated_cache_item = CachedItem(
-            mtime=mtime_now, size=size_now, shape=gray2.shape[:2],
-            version=CACHE_VERSION, sift_des=des2, sift_kp_pts=kp2_pts,
-            orb_des=orb_des2, phash=h2,
-        )
+        if need_cache:
+            updated_cache_item = CachedItem(
+                mtime=mtime_now, size=size_now, shape=gray2.shape[:2],
+                version=CACHE_VERSION, sift_des=des2, sift_kp_pts=kp2_pts,
+                orb_des=orb_des2, phash=h2,
+            )
+        else:
+            updated_cache_item = None
 
     n1 = 0 if new_kp_pts is None else len(new_kp_pts)
 
@@ -1046,15 +1060,7 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
                     conf = min(1.0, inl / max(1, min_inliers))
                     purity = inl / max(1, good_n)
                     s_score = 100.0 * raw * conf * (0.7 + 0.3 * purity)
-                    # cv2.DMatch не сериализуется pickle'ом (падает при
-                    # передаче результата из worker-процесса в main).
-                    # Храним только три числа на матч — этого достаточно
-                    # для восстановления DMatch при отрисовке.
-                    good_serializable = [
-                        (int(m.queryIdx), int(m.trainIdx), float(m.distance))
-                        for m in good
-                    ]
-                    extra = (good_serializable, mask, H)
+                    extra = (good, mask, H)
         except Exception:
             s_score = 0.0
 
@@ -1315,7 +1321,8 @@ def make_html_report(
         "max_name": _html.escape(max_name),
         "gallery_html": gallery_html,
         "rows_html": "".join(rows_html),
-        "sem_visible_default": "table-row" if n_with_sem > 0 else "none",
+        "sem_visible_default": "table-cell" if n_with_sem > 0 else "none",
+        "sem_checked": "checked" if n_with_sem > 0 else "",
     }
 
     out = string.Template(template_text).safe_substitute(subs)
@@ -1350,12 +1357,11 @@ def parse_args():
     #   без флагов           → HTML не генерируется (как раньше)
     p.add_argument("--html", nargs="?", const="auto", default=None,
                    help="путь к HTML-отчёту; без аргумента — "
-                        "reports/compare_trademarks_<timestamp>.html")
+                    "reports/<etalon_stem>_compare_<timestamp>.html")
     p.add_argument("--no-html", action="store_true",
                    help="отключить генерацию HTML-отчёта")
     p.add_argument("--html-flat", action="store_true",
-                   help="reports/compare_trademarks.html (без timestamp, "
-                        "перезапись)")
+                   help="reports/<etalon_stem>_compare.html (без timestamp, перезапись)")
     p.add_argument("--html-dir", type=str, default=REPORTS_DIR_DEFAULT,
                    help="папка для HTML-отчётов (по умолчанию: reports)")
     p.add_argument("--html-top", type=int, default=HTML_TOP_N_DEFAULT,
@@ -1631,6 +1637,8 @@ def _compute_semantic_scores(
 def _main_impl(args, log_path: Optional[Path]) -> None:
     t0 = time.perf_counter()
     dt_start = datetime.now()
+    # Единый timestamp для HTML-отчёта и top-match-файлов
+    run_ts = dt_start.strftime("%Y%m%d_%H%M%S")
 
     logger = setup_logger(getattr(logging, args.log_level.upper(), logging.INFO))
 
@@ -1642,20 +1650,11 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
         args.embedding_cache_file, ".emb_cache.pkl", args.pkl_cache_dir,
     )
 
-    # Резолвим путь HTML-отчёта один раз, по аналогии с логом
-    html_path = _resolve_html_path(
-        explicit=args.html,
-        flat=args.html_flat,
-        no_html=args.no_html,
-        html_dir=args.html_dir,
-    )
-
     logger.info("=" * 90)
     logger.info(f"Запуск: {dt_start:%Y-%m-%d %H:%M:%S} | "
                 f"compare_trademarks_{SCRIPT_VERSION}")
     logger.info(f"Лог-файл: {log_path.resolve() if log_path else 'отключён'}")
-    logger.info(f"HTML-отчёт: "
-                f"{html_path.resolve() if html_path else 'отключён'}")
+    # HTML-отчёт логируется ниже — после того как определён эталон
     if args.semantic_weight > 0:
         logger.warning("semantic_weight > 0: Total% смешивает классические "
                        "метрики и семантику. Пороги --threshold / --risk-* "
@@ -1683,6 +1682,21 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
         logger.warning(f"Эталон — папка, использую первый файл: {etalon_path.name}")
     else:
         etalon_path = new_path
+
+    # --- Префикс для имён файлов = stem эталона ---
+    etalon_stem = etalon_path.stem  # "citroen" для "citroen.jpg"
+
+    # --- Резолвим HTML-отчёт (prefix = etalon_stem, общий ts) ---
+    html_path = _resolve_html_path(
+        explicit=args.html,
+        flat=args.html_flat,
+        no_html=args.no_html,
+        html_dir=args.html_dir,
+        prefix=etalon_stem,
+        ts=run_ts,
+    )
+    logger.info(f"HTML-отчёт: "
+                f"{html_path.resolve() if html_path else 'отключён'}")
 
     # ----- классические веса -----
     w = np.asarray(args.weights, dtype=np.float64)
@@ -1761,6 +1775,7 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
             float(args.semantic_weight),
             clip_scores.get(str(path)),
             dino_scores.get(str(path)),
+            bool(args.cache),
         ))
 
     # ----- пул -----
@@ -1892,15 +1907,7 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
             good, mask, _ = extra
             kp2_list = [cv2.KeyPoint(float(pt[0]), float(pt[1]), 1)
                         for pt in kp2_pts]
-            # good приходит из worker-процесса как список кортежей
-            # (queryIdx, trainIdx, distance), а drawMatches ждёт
-            # cv2.DMatch — восстанавливаем объекты только здесь,
-            # в main-процессе (pickle через IPC уже не нужен).
-            inlier_matches = [
-                cv2.DMatch(int(q), int(t), float(d))
-                for (q, t, d), ok in zip(good, mask.ravel().tolist())
-                if ok
-            ]
+            inlier_matches = [m for m, ok in zip(good, mask.ravel().tolist()) if ok]
             if len(inlier_matches) > 150:
                 inlier_matches = inlier_matches[:150]
             vis = cv2.drawMatches(
@@ -1909,19 +1916,18 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
                 singlePointColor=(120, 120, 120),
                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS,
             )
-            out_name = f"top{idx + 1}_matches_{Path(best['name']).stem}.jpg"
+            # --- Именование top-match-файлов ---
+            #   top-1  : <etalon_stem>_top-match_<run_ts>.jpg
+            #   top-N  : <etalon_stem>_top<N>-match_<run_ts>.jpg
+            if idx == 0:
+                out_name = f"{etalon_stem}_top-match_{run_ts}.jpg"
+            else:
+                out_name = f"{etalon_stem}_top{idx + 1}-match_{run_ts}.jpg"
             out_path = vis_dir / out_name
             cv2.imwrite(str(out_path), vis)
             logger.info(f"Визуализация top-{idx + 1}: {out_path} "
                         f"({best['name']}, Total={best['total']:.2f}%)")
             top_vis_paths.append((out_path, best["name"], best["total"]))
-
-        if top_vis_paths:
-            try:
-                shutil.copy(str(top_vis_paths[0][0]),
-                            str(vis_dir / "top1_matches.jpg"))
-            except Exception:
-                pass
 
     # ----- HTML -----
     if html_path is not None:
