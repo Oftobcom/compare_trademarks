@@ -32,7 +32,6 @@ compare_trademarks_v10.py — сравнение товарного знака �
 
 Имена файлов отчётов:
   <html-dir>/<etalon_stem>_compare_<YYYYmmdd_HHMMSS>.html
-  <html-dir>/<etalon_stem>_top-match_<YYYYmmdd_HHMMSS>.jpg
   <html-dir>/<etalon_stem>_top<N>-match_<YYYYmmdd_HHMMSS>.jpg
 
   где <etalon_stem> — имя эталона без расширения (например, "citroen"
@@ -956,7 +955,7 @@ class EmbeddingManager:
 #   13 orb_features          14 classic_weights_6   15 cached_item
 #   16 ignore_white          17 white_thresh        18 risk_high
 #   19 risk_medium           20 semantic_weight     21 clip_score_pre
-#   22 dino_score_pre        23 need_cache
+#   22 dino_score_pre        23 need_cache           24 need_vis
 # ============================================================================
 
 def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
@@ -985,6 +984,7 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
         clip_score_pre,       # ∈ [0, 100] | None
         dino_score_pre,       # ∈ [0, 100] | None
         need_cache,           # bool
+        need_vis,             # bool
     ) = task
 
     path = Path(path_str)
@@ -1129,6 +1129,22 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
 
     risk = classify_risk(total, risk_high, risk_medium)
 
+    # cv2.DMatch не picklable → упаковываем в numpy-индексы,
+    # чтобы результат пережил ProcessPoolExecutor.
+    if need_vis and extra is not None:
+        good, mask_, H_ = extra
+        gq = np.fromiter((m.queryIdx for m in good),
+                         dtype=np.int32, count=len(good))
+        gt = np.fromiter((m.trainIdx for m in good),
+                         dtype=np.int32, count=len(good))
+        extra_out = (gq, gt, mask_, H_)
+        img2_out = img2
+        kp2_pts_out = kp2_pts
+    else:
+        extra_out = None
+        img2_out = None
+        kp2_pts_out = None
+
     return {
         "name": path.name,
         "path": str(path),
@@ -1150,9 +1166,9 @@ def process_one(task: Tuple) -> Optional[Dict[str, Any]]:
         "risk": risk,
         "cached_item": updated_cache_item,
         # только для визуализации (не идёт в отчёты)
-        "_extra": extra,
-        "_img2": img2 if extra is not None else None,
-        "_kp2_pts": kp2_pts if extra is not None else None,
+        "_extra": extra_out,
+        "_img2": img2_out,
+        "_kp2_pts": kp2_pts_out,
     }
 
 
@@ -1776,6 +1792,7 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
             clip_scores.get(str(path)),
             dino_scores.get(str(path)),
             bool(args.cache),
+            bool(args.visualize),
         ))
 
     # ----- пул -----
@@ -1904,25 +1921,24 @@ def _main_impl(args, log_path: Optional[Path]) -> None:
             kp2_pts = best.get("_kp2_pts")
             if extra is None or kp_new is None or kp2_pts is None or img2 is None:
                 continue
-            good, mask, _ = extra
+            gq, gt, mask, _H = extra
             kp2_list = [cv2.KeyPoint(float(pt[0]), float(pt[1]), 1)
                         for pt in kp2_pts]
-            inlier_matches = [m for m, ok in zip(good, mask.ravel().tolist()) if ok]
-            if len(inlier_matches) > 150:
-                inlier_matches = inlier_matches[:150]
+            inlier_idxs = np.flatnonzero(mask.ravel())
+            if inlier_idxs.size > 150:
+                inlier_idxs = inlier_idxs[:150]
+            inlier_matches = [
+                cv2.DMatch(int(gq[i]), int(gt[i]), 0, 0.0)
+                for i in inlier_idxs
+            ]
             vis = cv2.drawMatches(
                 img_new, kp_new, img2, kp2_list, inlier_matches, None,
                 matchColor=(0, 255, 0),
                 singlePointColor=(120, 120, 120),
                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS,
             )
-            # --- Именование top-match-файлов ---
-            #   top-1  : <etalon_stem>_top-match_<run_ts>.jpg
-            #   top-N  : <etalon_stem>_top<N>-match_<run_ts>.jpg
-            if idx == 0:
-                out_name = f"{etalon_stem}_top-match_{run_ts}.jpg"
-            else:
-                out_name = f"{etalon_stem}_top{idx + 1}-match_{run_ts}.jpg"
+            # --- Именование файлов визуализации ---
+            out_name = f"{etalon_stem}_top{idx + 1}-match_{run_ts}.jpg"
             out_path = vis_dir / out_name
             cv2.imwrite(str(out_path), vis)
             logger.info(f"Визуализация top-{idx + 1}: {out_path} "

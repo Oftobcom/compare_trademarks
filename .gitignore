@@ -18,8 +18,7 @@ reports/
 *.log
 
 # --- Визуализации (создаются в CWD при --visualize) ---
-top*_matches_*.jpg
-top1_matches.jpg
+*_top*-match_*.jpg
 
 # --- Отчёты ---
 *.csv
